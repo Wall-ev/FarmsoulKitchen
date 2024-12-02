@@ -85,11 +85,16 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
         if (blockEntity == null) {
             return false;
         }
-        if (task.isCookBE(blockEntity)) {
+        if (task.isCookBE(blockEntity) && maidCanIntractBlock(maid, blockPos)) {
             this.processRecipeManager(maid);
             return task.shouldMoveTo(worldIn, maid, (B) blockEntity, maidRecipesManager);
         }
         return false;
+    }
+
+//    @todo 女仆有无权限与该方块交互： 领地、殖民地
+    protected boolean maidCanIntractBlock(EntityMaid maid, BlockPos pos) {
+        return true;
     }
 
     protected boolean checkPathReach(EntityMaid maid, BlockPos pos) {

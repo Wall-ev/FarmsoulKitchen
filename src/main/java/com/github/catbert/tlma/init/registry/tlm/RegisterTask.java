@@ -1,5 +1,9 @@
 package com.github.catbert.tlma.init.registry.tlm;
 
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.task.TaskBncCookPotV2;
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.task.TaskFdCookPotV2;
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.task.TaskFrKettleV2;
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.task.TaskYhcTeaKettleV2;
 import com.github.catbert.tlma.config.subconfig.RegisterConfig;
 import com.github.catbert.tlma.foundation.utility.Mods;
 import com.github.catbert.tlma.task.cook.v1.bakery.TaskDbkCookingPot;
@@ -115,5 +119,10 @@ public final class RegisterTask {
         if (Mods.DV.isLoaded() && RegisterConfig.FERMENTATION_BARREL_TASK_ENABLED.get()) {
             manager.add(TaskFermentationBarrel.getInstance());
         }
+
+        manager.add(new TaskFdCookPotV2());
+        manager.add(new TaskYhcTeaKettleV2());
+        manager.add(new TaskBncCookPotV2());
+        manager.add(new TaskFrKettleV2());
     }
 }

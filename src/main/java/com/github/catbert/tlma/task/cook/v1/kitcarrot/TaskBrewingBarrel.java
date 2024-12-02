@@ -1,22 +1,20 @@
 package com.github.catbert.tlma.task.cook.v1.kitcarrot;
 
 import com.github.catbert.tlma.entity.data.inner.task.CookData;
+import com.github.catbert.tlma.task.cook.handler.v2.MaidRecipesManager;
 import com.github.catbert.tlma.task.cook.v1.common.TaskFdPot;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import io.github.tt432.kitchenkarrot.blockentity.AirCompressorBlockEntity;
-import io.github.tt432.kitchenkarrot.recipes.recipe.AirCompressorRecipe;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity;
+import io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TaskAirCompressor extends TaskFdPot<AirCompressorBlockEntity, AirCompressorRecipe> {
-    public static final TaskAirCompressor INSTANCE = new TaskAirCompressor();
-
-    private TaskAirCompressor() {
-    }
-
+public class TaskBrewingBarrel extends TaskFdPot<BrewingBarrelBlockEntity, BrewingBarrelRecipe> {
     @Override
     public TaskDataKey<CookData> getCookDataKey() {
         return null;
@@ -24,11 +22,11 @@ public class TaskAirCompressor extends TaskFdPot<AirCompressorBlockEntity, AirCo
 
     @Override
     public boolean isCookBE(BlockEntity blockEntity) {
-        return blockEntity instanceof AirCompressorBlockEntity;
+        return blockEntity instanceof BrewingBarrelBlockEntity;
     }
 
     @Override
-    public RecipeType<AirCompressorRecipe> getRecipeType() {
+    public RecipeType<BrewingBarrelRecipe> getRecipeType() {
         return null;
     }
 
@@ -43,12 +41,12 @@ public class TaskAirCompressor extends TaskFdPot<AirCompressorBlockEntity, AirCo
     }
 
     @Override
-    public ItemStack getFoodContainer(AirCompressorBlockEntity blockEntity) {
+    public ItemStack getFoodContainer(BrewingBarrelBlockEntity blockEntity) {
         return null;
     }
 
     @Override
-    public ItemStackHandler getItemStackHandler(AirCompressorBlockEntity be) {
+    public ItemStackHandler getItemStackHandler(BrewingBarrelBlockEntity be) {
         return null;
     }
 
@@ -63,7 +61,7 @@ public class TaskAirCompressor extends TaskFdPot<AirCompressorBlockEntity, AirCo
     }
 
     @Override
-    public boolean isHeated(AirCompressorBlockEntity be) {
+    public boolean isHeated(BrewingBarrelBlockEntity be) {
         return false;
     }
 
@@ -77,8 +75,8 @@ public class TaskAirCompressor extends TaskFdPot<AirCompressorBlockEntity, AirCo
         return null;
     }
 
-    public static TaskAirCompressor getInstance() {
-        return INSTANCE;
+    @Override
+    public boolean shouldMoveTo(ServerLevel serverLevel, EntityMaid entityMaid, BrewingBarrelBlockEntity blockEntity, MaidRecipesManager<BrewingBarrelRecipe> maidRecipesManager) {
+        return super.shouldMoveTo(serverLevel, entityMaid, blockEntity, maidRecipesManager);
     }
-
 }

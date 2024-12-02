@@ -1,4 +1,4 @@
-package com.github.catbert.tlma.api.task.v2;
+package com.github.catbert.tlma.api.task.v2.dis;
 
 import com.github.catbert.tlma.api.TaskBookEntryType;
 import com.github.catbert.tlma.api.task.v1.cook.ICookTask;

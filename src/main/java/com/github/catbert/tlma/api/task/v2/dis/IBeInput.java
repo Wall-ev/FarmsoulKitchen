@@ -1,5 +1,6 @@
-package com.github.catbert.tlma.api.task.v2;
+package com.github.catbert.tlma.api.task.v2.dis;
 
+import com.github.catbert.tlma.api.task.v2.IBeInv;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 

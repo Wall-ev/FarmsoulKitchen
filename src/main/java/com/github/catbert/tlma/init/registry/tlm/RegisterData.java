@@ -1,5 +1,6 @@
 package com.github.catbert.tlma.init.registry.tlm;
 
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.task.TaskFrKettleV2;
 import com.github.catbert.tlma.config.subconfig.RegisterConfig;
 import com.github.catbert.tlma.entity.data.inner.task.BerryData;
 import com.github.catbert.tlma.entity.data.inner.task.CookData;
@@ -40,6 +41,7 @@ public final class RegisterData {
     public static TaskDataKey<CookData> YHC_MOKA;
     public static TaskDataKey<CookData> YHC_TEA_KETTLE;
     public static TaskDataKey<CookData> YHC_DRYING_RACK;
+    public static TaskDataKey<CookData> FR_KETTLE;
 
     public static TaskDataKey<CookData> DB_BEER;
 
@@ -85,6 +87,7 @@ public final class RegisterData {
         if (Mods.YHCD.isLoaded() && RegisterConfig.YHC_DRYING_RACK_TASK_ENABLED.get()) {
             YHC_DRYING_RACK = register.register(TaskDryingRack.UID, CookData.CODEC);
         }
+        FR_KETTLE = register.register(TaskFrKettleV2.UID, CookData.CODEC);
 
 
         if (Mods.DB.isLoaded() && RegisterConfig.DB_BEER_TASK_ENABLED.get()) {

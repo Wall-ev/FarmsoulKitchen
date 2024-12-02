@@ -2,6 +2,7 @@ package com.github.catbert.tlma.task.cook.handler.v2;
 
 import com.github.catbert.tlma.TLMAddon;
 import com.github.catbert.tlma.api.task.v1.cook.ICookTask;
+import com.github.catbert.tlma.api.task.v2.rule.itemhandler.MaidRecipe;
 import com.github.catbert.tlma.entity.data.inner.task.CookData;
 import com.github.catbert.tlma.init.InitItems;
 import com.github.catbert.tlma.inventory.container.item.BagType;
@@ -37,6 +38,7 @@ public class MaidRecipesManager<T extends Recipe<? extends Container>> {
     private List<String> recipeIds;
     private int repeatTimes = 0;
     private List<Pair<List<Integer>, List<List<ItemStack>>>> recipesIngredients = new ArrayList<>();
+    private final List<MaidRecipe<T>> maidRecs = new ArrayList<>();
     private List<T> currentRecs = new ArrayList<>();
     private ICookInventory lastInv;
 
@@ -286,6 +288,96 @@ public class MaidRecipesManager<T extends Recipe<? extends Container>> {
         ItemCookBag.setContainer(stackInSlot1, containers);
     }
 
+
+
+    private void createIngres2(EntityMaid maid) {
+        List<Pair<List<Integer>, List<Item>>> _make = new ArrayList<>();
+        Map<Item, Integer> available = new HashMap<>(getIngredientInv(maid).getInventoryItem());
+
+        for (T t : this.currentRecs) {
+            Pair<List<Integer>, List<Item>> maxCount = this.getAmountIngredient2(t, available);
+            if (!maxCount.getFirst().isEmpty()) {
+                _make.add(Pair.of(maxCount.getFirst(), maxCount.getSecond()));
+            }
+        }
+
+        repeat(_make, available, this.repeatTimes);
+
+        this.recipesIngredients = transform(maid, _make, available);
+    }
+
+    protected Pair<List<Integer>, List<Item>> getAmountIngredient2(T recipe, Map<Item, Integer> available) {
+        List<Ingredient> ingredients = recipe.getIngredients();
+        boolean[] canMake = {true};
+        boolean[] single = {false};
+        List<Item> invIngredient = new ArrayList<>();
+        Map<Item, Integer> itemTimes = new HashMap<>();
+
+        extraStartRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
+
+        for (Ingredient ingredient : ingredients) {
+
+            if (ingredient.getItems().length == 0) {
+                Item emptyItem = ItemStack.EMPTY.getItem();
+                invIngredient.add(emptyItem);
+                itemTimes.put(emptyItem, 0);
+                continue;
+            }
+
+            boolean hasIngredient = false;
+            for (Item item : available.keySet()) {
+                ItemStack stack = item.getDefaultInstance();
+                if (ingredient.test(stack)) {
+                    invIngredient.add(item);
+                    hasIngredient = true;
+
+                    if (stack.getMaxStackSize() == 1) {
+                        single[0] = true;
+                        itemTimes.put(item, 1);
+                    } else {
+                        itemTimes.merge(item, 1, Integer::sum);
+                    }
+
+                    break;
+                }
+            }
+
+            if (!hasIngredient) {
+                canMake[0] = false;
+                itemTimes.clear();
+                invIngredient.clear();
+                break;
+            }
+        }
+
+        extraEndRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
+
+        if (!canMake[0] || invIngredient.stream().anyMatch(item -> available.get(item) <= 0)) {
+            return Pair.of(new ArrayList<>(), new ArrayList<>());
+        }
+
+        int maxCount = 64;
+        if (single[0] || this.single) {
+            maxCount = 1;
+        } else {
+            for (Item item : itemTimes.keySet()) {
+                maxCount = Math.min(maxCount, item.getDefaultInstance().getMaxStackSize());
+                maxCount = Math.min(maxCount, available.get(item) / itemTimes.get(item));
+            }
+        }
+
+        List<Integer> countList = new ArrayList<>();
+        for (Item item : invIngredient) {
+            countList.add(maxCount);
+            available.put(item, available.get(item) - maxCount);
+        }
+
+        return Pair.of(countList, invIngredient);
+    }
+
+
+
+
     private void createIngres(EntityMaid maid) {
         List<Pair<List<Integer>, List<Item>>> _make = new ArrayList<>();
         Map<Item, Integer> available = new HashMap<>(getIngredientInv(maid).getInventoryItem());
@@ -397,6 +489,14 @@ public class MaidRecipesManager<T extends Recipe<? extends Container>> {
         extraStartRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
 
         for (Ingredient ingredient : ingredients) {
+
+            if (ingredient.getItems().length == 0) {
+                Item emptyItem = ItemStack.EMPTY.getItem();
+                invIngredient.add(emptyItem);
+                itemTimes.put(emptyItem, 0);
+                continue;
+            }
+
             boolean hasIngredient = false;
             for (Item item : available.keySet()) {
                 ItemStack stack = item.getDefaultInstance();
